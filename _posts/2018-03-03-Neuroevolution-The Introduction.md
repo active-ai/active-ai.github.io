@@ -131,7 +131,7 @@ In the main() function, I've initialised bestParent with the first generation an
 
 ![](../assets/GA_output.png)
 
-The above code gives a gist of how genetic algorithms uses the concepts of biological operators of evolution – selection, mutation etc. However it is a really small application. The one shown in the very beginning of this article is one of the incredible applications of the genetic algorithm which attempts to draw a faithful representation of Mona Lisa. That is Roger Alsing's Mona Lisa problem, where the mentioned image has to be reproduced as faithfully as possible using only 50 triangles.
+The above code gives a gist of how genetic algorithms uses the concepts of biological operators of evolution – selection, mutation etc. You can get this code in [this repository](https://github.com/yashikabadaya/Password_Detection_GA.git). However it is a really small application. The one shown in the very beginning of this article is one of the incredible applications of the genetic algorithm which attempts to draw a faithful representation of Mona Lisa. That is Roger Alsing's Mona Lisa problem, where the mentioned image has to be reproduced as faithfully as possible using only 50 triangles.
 
 Another amazing implementation is:
 
