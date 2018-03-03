@@ -7,7 +7,7 @@ comments: true
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 
 
-Of late I came across a really mind blowing video which is shown below. 
+I recently came across a really mind blowing video which is shown below. 
 
 <iframe width="660" height="300" src="https://www.youtube.com/embed/27PYlj-qNb0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
