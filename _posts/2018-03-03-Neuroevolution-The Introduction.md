@@ -1,3 +1,4 @@
+
 ---
 layout: post
 title: Neuroevolution - The Introduction
@@ -25,7 +26,7 @@ This algorithm went viral in a video called MarI/O where a network was developed
 
 <iframe width="660" height="300" src="https://www.youtube.com/embed/qv6UVOQ0F44" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
-**NeuroEvolution of Augmenting Topologies (NEAT)** is a genetic algorithm (GA) for the generation of evolving artificial neural networks a neuroevolution technique developed by Ken Stanley in 2002 while at The University of Texas at Austin.
+As per Wikipedia, **NeuroEvolution of Augmenting Topologies (NEAT)** is a genetic algorithm (GA) for the generation of evolving artificial neural networks a neuroevolution technique developed by Ken Stanley in 2002 while at The University of Texas at Austin.
 
 A thorough treatment of the algorithm can be found in the paper [Evolving Neural Networks through Augmenting Topologies](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf) by **Kenneth O. Stanley** and **Risto Miikkulainen**.
 
@@ -42,95 +43,94 @@ We start with an initial population (which may be generated at random or seeded 
 <img title="Genetic Algorithm Flowchart" align= "middle" src="https://www.researchgate.net/profile/Puran_Tewari/publication/257885838/figure/fig1/AS:267387412938810@1440761535926/Flow-chart-for-typical-genetic-algorithm-technique.png" style="width: 700px; height:400px" >
 
 
-Keeping all the beginner audience in mind, I've shown a very simple implementation of genetic algorithm below. In the code below, the aim is to guess a password by using the concept of genetic algorithm. We'll start by randomly generating an initial sequence of letters as we don't have any idea from where to start guessing and then mutate/change one random letter at a time until the sequence of letters is our target password "ActiveAI123".
+Keeping all the beginner audience in mind, I've shown a very simple implementation of genetic algorithm below in C++. In the code below, the aim is to guess a password by using the concept of genetic algorithm. We'll start by randomly generating an initial sequence of letters as we don't have any idea from where to start guessing and then mutate/change one random letter at a time until the sequence of letters is our target password "ActiveAI123".
 
-    import random
+    #include <iostream>
+    #include <stdlib.h>
+    #include <time.h>
+    #include <string.h>
+    using namespace std;
+    char geneSet[]="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!1234567890";
+    char target[]="ActiveAI123";
 
-    import datetime
+In the beginning of the code I've defined variables geneSet (generic set of letters to create genes from) and target (the password we wish the program to guess).
 
-    geneSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!1234567890"
+    char* generate_parent(int length)
+    {
+        char* gene;
+        gene= (char*) calloc(length, sizeof(char));
+        for (int i=0; i<length; i++)
+        {
+        int RandIndex = rand() % strlen(geneSet);       
+        gene[i]=geneSet[RandIndex];
+        }
+        gene[length]='\0';
+        return (gene);
+    }   
 
-    target = "ActiveAI123"
+Next I've created a function – generate_parent that generates a random string of letters from the variable geneSet. When this function is called, it takes the length of the target as argument. Here I've initialised a dynamic array
+(gene) that gets initialised to a random string of length equal to the target's length.  
 
-In the beginning of the code we define variables geneSet (generic set of letters to create genes from) and target (the password we wish the program to guess).
+    int get_fitness(char guess[])
+    { int sum=0;
+        for(int i=0; i<strlen(target); i++)
+        {
+            if(guess[i]==target[i])
+            {
+                sum++;
+            }
+        }
+    return(sum);
+    }
 
-    def generate_parent(length):
+Next I've defined get_fitness function which will return the fitness value of the genetic algorithm. This provides the feedback to the engine to guide it towards solution. In this problem our fitness value is the total number of letters in the guess that matches the letter in the same position of the password.
 
-    	genes = []
+We also need a way to produce a new guess by mutating the current one. In the following function definition, any one random index (RandIndex) is chosen from (0, len(parent)) and index (RandIndex_1) is chosen from (0, len(geneSet)). Then index (RandIndex) of the parent array gets equal to the element in index (RandIndex_1) of the geneSet.
 
-    	while len(genes)< length:
+    void mutate(char parent[])
+    {  
+       int RandIndex = rand() % strlen(parent);
+       int RandIndex_1 = rand() % strlen(geneSet);
+       parent[RandIndex]=geneSet[RandIndex_1];
+       
+    }
 
-        	   sampleSize = min(length - len(genes), len(geneSet))
+In the main() function, I've initialised bestParent with the first generation and bestFitness with the fitness value of first generation. Here c is a counter initialised to 0 which gets increamented with creation of a new generation. In the while loop, after each mutation, the fitness of previous generation i.e.bestFitness is compared with the fitness of the mutated generation i.e. child. When childFitness becomes greater than or equal to the length of our desired target, the program will come out of the loop. Hence we will get the target.  
+    
+    int main()
+    {
+    srand (time(NULL));
+    int i, j;
+    char *bestParent = generate_parent(strlen(target)) ;
+    int bestFitness = get_fitness(bestParent);
+    char* child =(char*) calloc(strlen(target), sizeof(char));   
+    int c=0;
+    while (1)
+    {
+        strcpy(child,bestParent);    
+        mutate(child);
+        int childFitness = get_fitness(child);   
+    c++;
+    cout<<"Generation_"<<c<<"    "<<child<<endl;
+    if (bestFitness >= childFitness)
+        { 
+            continue;
+        }
+    
+     bestFitness = childFitness;
+    strcpy(bestParent,child);
+    
+    if (bestFitness >= strlen(target))
+        { 
+        break;
+        } 
+    }    
+    }
 
-        	   genes.extend(random.sample(geneSet, sampleSize))
 
-            return ''.join(genes)
+ The output of the above implementation looks like this:
 
-Next we create a function – generate_parent that generates a random string of letters from the variable geneSet. Here random.sample will return sampleSize length of unique elements chosen from the population sequence. It ensures there will be no duplicates in the generated parent unless geneSet contains duplicate or length is greater than length of geneSet.
-
-    def get_fitness(guess):
-
-        return sum(1 for expected, actual in zip(target, guess) if expected == actual)
-
-Next we define get_fitness function which will return the fitness value of the genetic algorithm. This provides the feedback to the engine to guide it toward a solution. In this problem our fitness value is the total number of letters in the guess that match the letter in the same position of the password.
-
-We also need a way to produce a new guess by mutating the current one. The following implementation converts the parent string to an array with list(parent) then replaces 1 letter in the array with a randomly selected one from geneSet. Then it recombines the result into a string with ''.join(genes).
-
-    def mutate(parent):
-
-        index = random.randrange(0, len(parent))
-
-        childGenes = list(parent)
-
-        newGene, alternate = random.sample(geneSet, 2)
-
-        childGenes[index] = alternate
-
-        return ''.join(childGenes)
-
-    def display(guess):
-
-        timeDiff = datetime.datetime.now() - startTime
-
-        fitness = get_fitness(guess)
-
-        print("{0}\t{1}\t{2}".format("Generation "+ str(fitness), guess,  str(timeDiff))) 
-
-Display function will show the gene sequence, its fitness value and how much time has elapsed. This helps us to keep a track of the algorithm.
-
-    startTime = datetime.datetime.now()
-
-    bestParent = generate_parent(len(target))
-
-    bestFitness = get_fitness(bestParent)
-
-    display(bestParent)
-
-    while True:
-
-        child = mutate(bestParent)
-
-        childFitness = get_fitness(child)
-
-        if bestFitness >= childFitness:
-
-            continue
-
-        display(child)
-
-        if childFitness >= len(bestParent):
-
-            break
-
-        bestFitness = childFitness
-
-        bestParent = child
-
-In the above implementation, startTime variable will return the current local date and time when the program starts to look for the very first parent of generation 1. In the while loop, Generation 1 is mutated and fitness is measured until the mutant's fitness is greater than or equal to len(bestParent). This while loop goes on until all letters match with the target password. The output of the above implementation looks like this:
-
-<img title= "Output" align= "middle" src="https://mail.google.com/mail/u/1/?ui=2&ik=2708e0fb32&view=att&th=161cb9fdfabc2399&attid=0.1&disp=safe&realattid=1593352865703414201-local0&zw
-" style="width: 600px; height:250px" >
-
+![](../assets/GA_output.png)
 
 The above code gives a gist of how genetic algorithms uses the concepts of biological operators of evolution – selection, mutation etc. However it is a really small application. The one shown in the very beginning of this article is one of the incredible applications of the genetic algorithm which attempts to draw a faithful representation of Mona Lisa. That is Roger Alsing's Mona Lisa problem, where the mentioned image has to be reproduced as faithfully as possible using only 50 triangles.
 
@@ -143,7 +143,7 @@ In the above implementation, genetic algorithm is used to find out the appropria
 Here are few reference links that might help you gain more insights on the topic:
 
 - [NEAT Algorithm](http://neat-python.readthedocs.io/en/latest/neat_overview.html)
-- [NEAT Users Page](https://www.cs.ucf.edu/~kstanley/ne)
+- [Neuroevolution](https://www.oreilly.com/ideas/neuroevolution-a-different-kind-of-deep-learning)
 - [Genetic Algorithm](https://www.cse.unsw.edu.au/~billw/cs9414/notes/ml/05ga/05ga.html)
 
 
